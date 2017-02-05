@@ -25,7 +25,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://work:123@localhost/flask'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://work:123@localhost/flask_dev'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SECRET_KEY'] = 'nichai'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -48,20 +48,20 @@ migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
 
-# def send_async_email(app, msg):
-#     with app.app_context():
-#         mail.send(msg)
-#         print'finished'
-#
-# # Todo celery
-# def send_email(to, subject, template, **kwargs):
-#     msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + ' ' + subject,
-#                   sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
-#     msg.body = render_template(template + '.txt', **kwargs)
-#     msg.html = render_template(template + '.html', **kwargs)
-#     thr = Thread(target=send_async_email, args=[app, msg])
-#     thr.start()
-#     return thr
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+        print'finished'
+
+# Todo celery
+def send_email(to, subject, template, **kwargs):
+    msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + ' ' + subject,
+                  sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
+    msg.body = render_template(template + '.txt', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    return thr
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -73,8 +73,8 @@ def index():
             user = WebUser(username=form.name.data)
             db.session.add(user)
             session['know'] = False
-            # if app.config['FLASKY_ADMIN']:
-            #     send_email(app.config['FLASKY_ADMIN'], 'New User', 'mail/new_user', user=user)
+            if app.config['FLASKY_ADMIN']:
+                send_email(app.config['FLASKY_ADMIN'], 'New User', 'mail/new_user', user=user)
         else:
             session['know'] = True
         session['name'] = form.name.data
@@ -137,7 +137,7 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
-    user = db.relationship('User', backref='role')
+    user = db.relationship('WebUser', backref='role')
 
     def __repr__(self):
         return '<Role {}>'.format(self.name)
