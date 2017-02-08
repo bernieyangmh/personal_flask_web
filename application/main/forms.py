@@ -48,3 +48,8 @@ class EditProfileAdminForm(FlaskForm):
         if field.data != self.user.username and \
                 WebUser.query.filter_by(username=field.data).first():
             raise ValidationError(u'用户名已使用')
+
+class PostForm(FlaskForm):
+    title = StringField(u'标题', validators=[Length(0, 64)])
+    body = TextAreaField(u"内容", validators=[DataRequired()])
+    submit = SubmitField(u'提交')

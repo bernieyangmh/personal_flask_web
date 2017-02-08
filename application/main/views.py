@@ -2,14 +2,14 @@
 
 from flask import render_template, session, redirect, url_for, current_app, g, request, make_response, flash
 from .. import db
-from ..models import WebUser, Role
+from ..models import WebUser, Role, Post, Permission
 from ..email import send_email
 from . import main
 from .forms import NameForm
 from datetime import datetime
 from flask_login import login_required, current_user
 from ..decorators import admin_required
-from .forms import EditProfileForm, EditProfileAdminForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm
 
 #注册的蓝本名main
 @main.route('/', methods=['GET', 'POST'])
@@ -29,30 +29,34 @@ def index():
     #     session['name'] = form.name.data
     #     return redirect(url_for('.index'))
 
-    a = request
-    b = current_app
-    c = g
-    d = session
-    ua = request.headers.get('User-Agent')
-    response = make_response('<h1>nihaoa</h1>')
-    response.set_cookie('answer', '42')
-
-    print(a)
-    print(b)
-    print(c)
-    print(d)
-    print(ua)
+    form = PostForm()
+    if current_user.can(Permission.WRITE_ARTICLES) and \
+            form.validate_on_submit():
+        post = Post(title=form.title.data,
+                    body=form.body.data,
+                    author=current_user._get_current_object())
+        #_get_current_object拿到真正的用户对象
+        db.session.add(post)
+        return redirect(url_for('.index'))
+    page = request.args.get('page', 1, type=int) #默认值int 1 pagination为一个对象
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
     return render_template('index.html', name=session.get('name'),
                            current_time=datetime.utcnow(),
-                           known=session.get('known', False))
+                           form=form, posts=posts,
+                           )
 
 
 @main.route('/user/<username>')
 def user(username):
     #无用户返回404
-    user = WebUser.query.filter_by(username=username).first_or_404()
-    return render_template('user.html', user=user)
-
+    @main.route('/user/<username>')
+    def user(username):
+        user = WebUser.query.filter_by(username=username).first_or_404()
+        posts = user.posts.order_by(Post.timestamp.desc()).all()
+        return render_template('user.html', user=user, posts=posts)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
