@@ -41,5 +41,10 @@ nosetests.xml
 # Virtual environment
 venv
 
+# env
+/flask
 migrations
-flask
+
+
+# git
+*.idea
