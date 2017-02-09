@@ -1,4 +1,6 @@
+# -*-  coding:utf-8 -*-
 #!/usr/bin/env python
+
 import os
 from application import create_app, db
 from application.models import WebUser, Role, Post, Permission
