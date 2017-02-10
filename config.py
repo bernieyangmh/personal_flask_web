@@ -31,6 +31,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://work:123@localhost/flask_test'
+    WTF_CSRF_ENABLED = False
 
 
 class ProductionConfig(Config):
