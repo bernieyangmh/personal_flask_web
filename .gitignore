@@ -48,3 +48,4 @@ migrations
 
 # git
 *.idea
+.idea
