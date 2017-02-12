@@ -1,7 +1,6 @@
 <p>Dear {{ user.username }},</p>
-<p>To confirm your new email address <a href="{{ url_for('auth.change_email', token=token, _external=True) }}">click here</a>.</p>
-<p>Alternatively, you can paste the following link in your browser's address bar:</p>
+<p>请确认您的新邮件地址<a href="{{ url_for('auth.change_email', token=token, _external=True) }}">点击此处</a>.</p>
+<p>或者复制下面的链接到浏览器URL</p>
 <p>{{ url_for('auth.change_email', token=token, _external=True) }}</p>
 <p>Sincerely,</p>
 <p>Berniey</p>
-<p><small>Note: replies to this email address are not monitored.</small></p>

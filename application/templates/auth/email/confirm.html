@@ -1,8 +1,7 @@
 <p>Dear {{ user.username }},</p>
-<p>Welcome to <b>Berniey-web</b>!</p>
-<p>To confirm your account please <a href="{{ url_for('auth.confirm', token=token, _external=True) }}">click here</a>.</p>
-<p>Alternatively, you can paste the following link in your browser's address bar:</p>
+<p>欢迎来到<b>Berniey-web</b>!</p>
+<p>请确认您的账号<a href="{{ url_for('auth.confirm', token=token, _external=True) }}">点击此处</a>.</p>
+<p>或者复制下面的链接到浏览器URL</p>
 <p>{{ url_for('auth.confirm', token=token, _external=True) }}</p>
 <p>Sincerely,</p>
 <p>Berniey</p>
-<p><small>Note: replies to this email address are not monitored.</small></p>
