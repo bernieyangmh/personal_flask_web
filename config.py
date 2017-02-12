@@ -25,17 +25,17 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://work:123@localhost/flask_dev'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://work:19940907@localhost/flask_dev'
 
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://work:123@localhost/flask_test'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://work:19940907@localhost/flask_test'
     WTF_CSRF_ENABLED = False
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://work:123@localhost/flask_pro'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://work:19940907@localhost/flask_pro'
 
 config = {
     'development': DevelopmentConfig,
